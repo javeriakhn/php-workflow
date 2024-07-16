@@ -53,11 +53,12 @@ jobs:
           REPO_URL: https://github.com/javeriakhn/build-repo.git
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          git config --global javeriakhn "GitHub Actions"
-          git config --global javeriakshan97@gmail.com "actions@github.com"
+          git config --global user.name "javeriakhn"
+          git config --global user.email "javeriakashan97@gmail.com"
           git clone https://$TOKEN@github.com/javeriakhn/build-repo.git build-repo
           mv application.tar.gz build-repo/
           cd build-repo
           git add application.tar.gz
           git commit -m "Add build for tag ${{ github.ref }}"
           git push origin main
+
