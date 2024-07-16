@@ -52,7 +52,7 @@ jobs:
         run: |
           git config --global user.name "javeriakhn"
           git config --global user.email "javeriakashan97@gmail.com"
-          git remote add origin https://javeriakhn:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/javeriakhn/project.git
+          git remote set-url origin https://javeriakhn:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/javeriakhn/project.git
 
       - name: Push to build repository
         run: |
@@ -62,5 +62,3 @@ jobs:
           git add application.tar.gz
           git commit -m "Add build for tag ${{ github.ref }}"
           git push origin main
-
-
