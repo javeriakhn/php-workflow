@@ -1,3 +1,4 @@
+
 name: Build and Package Application
 
 on:
@@ -28,9 +29,9 @@ jobs:
 
       - name: Delay before creating tar.gz
         run: sleep 5  # Adjust the delay time as needed
+
       - name: Create tar.gz package
-        run: |
-           run: tar -czvf application.tar.gz ${GITHUB_WORKSPACE}/.github/workflows ${GITHUB_WORKSPACE}/composer.json ${GITHUB_WORKSPACE}/skeleton
+        run: tar -czvf application.tar.gz .github/workflows composer.json skeleton
 
       - name: Push to build repository
         env:
@@ -38,8 +39,8 @@ jobs:
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           git config --global javeriakhn "GitHub Actions"
-          git config --global javeriakashan97@gmail.com "actions@github.com"
-          git clone https://$TOKEN@github.com/your-username/build-repo.git build-repo
+          git config --global javeriakshan97@gmail.com "actions@github.com"
+          git clone https://$TOKEN@github.com/javeriakhn/build-repo.git build-repo
           mv application.tar.gz build-repo/
           cd build-repo
           git add application.tar.gz
