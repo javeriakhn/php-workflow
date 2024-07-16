@@ -30,7 +30,7 @@ jobs:
         run: sleep 5  # Adjust the delay time as needed
       - name: Create tar.gz package
         run: |
-          tar -czvf application.tar.gz .
+          tar -czvf application.tar.gz .github workflows skeleton composer.json.
 
       - name: Push to build repository
         env:
