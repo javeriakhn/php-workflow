@@ -26,7 +26,8 @@ jobs:
           && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
           "
 
-
+      - name: Delay before creating tar.gz
+        run: sleep 5  # Adjust the delay time as needed
       - name: Create tar.gz package
         run: |
           tar -czvf application.tar.gz .
