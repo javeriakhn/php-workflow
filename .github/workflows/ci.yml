@@ -24,22 +24,27 @@ jobs:
         run: |
           docker run --rm -v "${{ github.workspace }}:/app" -w /app php:8.3-cli-alpine sh -c "
           apk add --no-cache curl \
-          && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+          && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer.json \
           "
 
-      - name: Delay before creating tar.gz
-        run: sleep 5  # Adjust the delay time as needed
+      - name: Verify composer.json exists
+        run: |
+          if [ ! -f "${{ github.workspace }}/composer.json" ]; then
+            echo "composer.json not found!"
+            exit 1
+          fi
 
       - name: Create tar.gz package
-        run: tar -czvf application.tar.gz .github/workflows composer.json skeleton
+        run: |
+          tar -czvf application.tar.gz composer.json skeleton
 
       - name: Push to build repository
         env:
           REPO_URL: https://github.com/javeriakhn/build-repo.git
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          git config --global javeriakhn "GitHub Actions"
-          git config --global javeriakshan97@gmail.com "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
           git clone https://$TOKEN@github.com/javeriakhn/build-repo.git build-repo
           mv application.tar.gz build-repo/
           cd build-repo
