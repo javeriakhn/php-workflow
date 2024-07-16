@@ -4,12 +4,12 @@ on:
   push:
     tags:
       - '*'
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger
     inputs:
       tag:
         description: 'Tag name'
         required: false
-        default: 'manual-trigger'
+        default: 'manual-trigger'  # Default value when triggering manually
 
 jobs:
   build:
@@ -19,34 +19,46 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
+      - name: List files for debugging
+        run: |
+          echo "Listing root directory:"
+          ls -la
+          echo "Listing .github/workflows directory:"
+          ls -la .github/workflows
+          echo "Listing skeleton directory:"
+          ls -la skeleton
+
       - name: Install PHP Composer
         run: |
           docker run --rm -v "${{ github.workspace }}:/app" -w /app php:8.3-cli-alpine sh -c "
-            apk add --no-cache curl \
-            && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer.json \
-            && composer --version
+          apk add --no-cache curl \
+          && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
           "
 
-      - name: Delay before creating tar.gz
-        run: sleep 5  # Adjust the delay time as needed
+      - name: Verify composer.json exists
+        run: |
+          if [ ! -f "${{ github.workspace }}/.github/workflows/composer.json" ]; then
+            echo "composer.json not found!"
+            exit 1
+          else
+            echo "composer.json found."
+          fi
 
       - name: Create tar.gz package
         run: |
-          tar -czvf application.tar.gz ${GITHUB_WORKSPACE}/.github/workflows ${GITHUB_WORKSPACE}/composer.json ${GITHUB_WORKSPACE}/skeleton
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "javeriakhn"
-          git config --global user.email "javeriakashan97@gmail.com"
+          tar -czvf application.tar.gz .github/workflows/composer.json skeleton
 
       - name: Push to build repository
         env:
           REPO_URL: https://github.com/javeriakhn/build-repo.git
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          git clone https://github.com/javeriakhn/build-repo.git build-repo || true
+          git config --global user.name "javeriakhn"
+          git config --global user.email "javeriakashan97@gmail.com"
+          git clone https://github.com/javeriakhn/build-repo.git build-repo
           mv application.tar.gz build-repo/
           cd build-repo
           git add application.tar.gz
           git commit -m "Add build for tag ${{ github.ref }}"
           git push origin main
+
