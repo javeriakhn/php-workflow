@@ -1,0 +1,7 @@
+{
+    "name": "javeriakhn/php-workflow",
+    "require": {
+        "php": "^8.0",
+        // Add other dependencies as needed
+    }
+}

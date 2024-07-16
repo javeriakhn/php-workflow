@@ -1,0 +1,4 @@
+[submodule "skeleton"]
+	path = skeleton
+	url = https://github.com/symfony/skeleton.git
+	branch = 6.4
